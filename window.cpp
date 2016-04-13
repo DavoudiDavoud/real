@@ -78,22 +78,19 @@ void Window::timerEvent( QTimerEvent * )
 {
 	int inval;
 	double value;
-	while(adcreader->read_enable()){
-				
-		inval=adcreader->get_samples();
-		value=(double) inval;
-		fprintf(stderr,"int = %d  double = %f     \r",inval,value);
+	inval=adcreader.dat;
+	value=(double) inval;
+	fprintf(stderr,"int = %d  double = %f     \r",inval,value);
 
 		
-		// add the new input to the plot
-		memmove( yData, yData+1, (plotDataSize-1) * sizeof(double) );
-		yData[plotDataSize-1] = value;
-		curve->setSamples(xData, yData, plotDataSize);
-		plot->replot();
-	}
-	// set the thermometer value
-	//thermo->setValue( inVal + 20 );
+	// add the new input to the plot
+	memmove( yData, yData+1, (plotDataSize-1) * sizeof(double) );
+	yData[plotDataSize-1] = value;
+	curve->setSamples(xData, yData, plotDataSize);
+	plot->replot();
 }
+	
+
 
 
 // this function can be used to change the gain of the A/D internal amplifier
