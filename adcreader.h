@@ -9,17 +9,15 @@ public:
 	ADCreader();
 	void quit();
 	void run();
-	int get_samples();
-	bool read_enable();
+	int dat;
+	
 	
 	int ret;
 	int fd;
 	int sysfs_fd;
 	bool running; 
 	int no_tty;
-	int inp;
-	int outp;
-	int buff[100];
+	
 
 
 };
