@@ -13,6 +13,7 @@
 #include <linux/spi/spidev.h>
 // sets the clock for the AD converter
 #include "gz_clk.h"
+#include "gpio-sysfs.h"
 
 // This class reads continously from the AD7705
 // and stores the data in a ringbuffer
@@ -69,12 +70,7 @@ class ADCreader : public QThread
   int *pIn;
   int *pOut;
 
-  // spi constants for the ioctrl calls
-  uint8_t mode;
-  uint8_t bits;
-  uint32_t speed;
-  uint16_t delay;
-  int drdy_GPIO;
+
 
 };
 
