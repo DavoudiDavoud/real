@@ -78,7 +78,7 @@ void Window::timerEvent( QTimerEvent * )
 {
 	int inval;
 	double value;
-	inval=adcreader.dat;
+	inval =adcreader->dat;
 	value=(double) inval;
 	fprintf(stderr,"int = %d  double = %f     \r",inval,value);
 
