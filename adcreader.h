@@ -40,6 +40,7 @@ class ADCreader : public QThread
 
  public:
   // thread functions
+  int dat;
   void quit();
   void run();
 
@@ -56,7 +57,7 @@ class ADCreader : public QThread
   // file descriptor on the SPI interface
   int fd;
   
-  int dat;
+
   int ret;
   int no_tty;
 
