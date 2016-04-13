@@ -54,6 +54,10 @@ class ADCreader : public QThread
   
   // file descriptor on the SPI interface
   int fd;
+  
+  int dat;
+  int ret;
+  int no_tty;
 
   // file descriptor on the interrupt pin
   int sysfs_fd;
