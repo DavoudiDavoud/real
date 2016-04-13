@@ -27,9 +27,7 @@ static uint8_t bits = 8;
 static uint16_t delay = 10;
 static int drdy_GPIO = 22;
 
-int inp=0;
-int outp=0;
-int buff[100];
+
 
 static void writeReset(int fd)
 {
@@ -68,25 +66,6 @@ static void writeReg(int fd, uint8_t v)
     pabort("can't send spi message");
 }
 
-static uint8_t readReg(int fd)
-{
-	int ret;
-	uint8_t tx1[1];
-	tx1[0] = 0;
-	uint8_t rx1[1] = {0};
-	struct spi_ioc_transfer tr;
-
-	memset(&tr,0,sizeof(struct spi_ioc_transfer));
-	tr.tx_buf = (unsigned long)tx1;
-	tr.rx_buf = (unsigned long)rx1;
-	tr.len = sizeof(tx1);
-
-	ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
-	if (ret < 1)
-	  pabort("can't send spi message");
-	  
-	return rx1[0];
-}
 
 
 static int readData(int fd)
@@ -189,7 +168,7 @@ ADCreader::ADCreader(){
 	fprintf(stderr, "end of instructor\n");
 
 }
-int ADCreader::run()
+void ADCreader::run()
 {
 	
 	// we read data in an endless loop and display it
@@ -203,7 +182,8 @@ int ADCreader::run()
 	    		fprintf(stderr,"Poll error %d\n",ret);
 	    	}
 	  	// read the data register by performing two 8 bit reads
-	  	return readData(fd);
+	  	dat = readData(fd);
+	  	
 	  
 	  
 }
