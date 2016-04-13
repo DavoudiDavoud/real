@@ -189,7 +189,7 @@ void ADCreader::run()
 }
 
 
-
+}
 
 void ADCreader::quit()
 {
