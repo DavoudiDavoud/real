@@ -9,7 +9,7 @@ public:
 	ADCreader();
 	void quit();
 	void run();
-	int dat;
+	int dat = 500;
 	
 	
 	int ret;
