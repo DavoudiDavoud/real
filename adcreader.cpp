@@ -1,17 +1,5 @@
 #include "adcreader.h"
-#include <stdint.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <linux/types.h>
-#include <linux/spi/spidev.h>
 
-#include "gz_clk.h"
-#include "gpio-sysfs.h"
-
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 #define MAX_SAMPLES 65536
 
 static void pabort(const char *s)
@@ -176,17 +164,18 @@ void ADCreader::run()
 
   while (running) {
     
+    
+    // tell the AD7705 to read the data register (16 bits)
+    writeReg(fd,0x38);
     // let's wait for data for max one second
     int ret = gpio_poll(sysfs_fd,1000);
     if (ret<1) {
       fprintf(stderr,"Poll error %d\n",ret);
     }
 	  
-    // tell the AD7705 to read the data register (16 bits)
-    writeReg(fd,0x38);
 
     // read the data register by performing two 8 bit reads
-    int value = readData(fd)-0x8000;
+    int value = readData(fd);
 
     *pIn = value;
      dat = value;
