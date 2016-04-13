@@ -1,5 +1,4 @@
 #include "adcreader.h"
-//#include <QDebug>
 #include <stdint.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -13,6 +12,7 @@
 #include "gpio-sysfs.h"
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
+#define MAX_SAMPLES 65536
 
 static void pabort(const char *s)
 {
@@ -170,25 +170,49 @@ ADCreader::ADCreader(){
 }
 void ADCreader::run()
 {
-	
-	// we read data in an endless loop and display it
-	
-	running = true; 
-	while (running) {
-		
-	  	writeReg(fd,0x38);
-	  	ret = gpio_poll(sysfs_fd,1000);
-	  	if (ret<1) {
-	    		fprintf(stderr,"Poll error %d\n",ret);
-	    	}
-	  	// read the data register by performing two 8 bit reads
-	  	dat = readData(fd);
-	  	
+  running = true;
+
+  fprintf(stderr,"We are running!\n");
+
+  while (running) {
+    
+    // let's wait for data for max one second
+    int ret = gpio_poll(sysfs_fd,1000);
+    if (ret<1) {
+      fprintf(stderr,"Poll error %d\n",ret);
+    }
 	  
-	  
+    // tell the AD7705 to read the data register (16 bits)
+    writeReg(fd,0x38);
+
+    // read the data register by performing two 8 bit reads
+    int value = readData(fd)-0x8000;
+
+    *pIn = value;
+     dat = value;
+    if (pIn == (&samples[MAX_SAMPLES-1])) 
+      pIn = samples;
+    else
+      pIn++;
+    
+  }
+  close(fd);
+  gpio_fd_close(sysfs_fd);
+}
+int ADCreader::getSample()
+{
+  assert(pOut!=pIn);
+  int value = *pOut;
+  if (pOut == (&samples[MAX_SAMPLES-1])) 
+    pOut = samples;
+  else
+    pOut++;
+  return value;
 }
 
-
+int ADCreader::hasSample()
+{
+  return (pOut!=pIn);
 }
 
 void ADCreader::quit()
