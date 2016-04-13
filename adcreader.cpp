@@ -189,63 +189,26 @@ ADCreader::ADCreader(){
 	fprintf(stderr, "end of instructor\n");
 
 }
-void ADCreader::run()
+int ADCreader::run()
 {
 	
 	// we read data in an endless loop and display it
 	
 	running = true; 
 	while (running) {
-//	int d=0;
-//	  do {
-	    // read /DRDY of the AD converter
-//	    d = bcm2835_gpio_lev(drdy_GPIO);
-	    // loop while /DRDY is high
-//	  } while ( d );
+		
+	  	writeReg(fd,0x38);
+	  	ret = gpio_poll(sysfs_fd,100);
+	  	if (ret<1) {
+	    		fprintf(stderr,"Poll error %d\n",ret);
+	    	}
+	  	// read the data register by performing two 8 bit reads
+	  	return readData(fd);
 	  
-	  // tell the AD7705 to read the data register (16 bits)
-	  // let's wait for data for max one second
-	  ret = gpio_poll(sysfs_fd,100);
-	  if (ret<1) {
-	    fprintf(stderr,"Poll error %d\n",ret);
-	    }
-
-  
-	  writeReg(fd,0x38);
-	  // read the data register by performing two 8 bit reads
-	  int value = readData(fd)-0x8000;
 	  
-	  buff[inp]=value;
-          //fprintf(stderr,"data = %d       \n",buff[inp]);
-	  inp=(inp+1)%100;	
-	  
-
-		// if stdout is redirected to a file or pipe, output the data
-		/*if( no_tty )
-		{
-			printf("%d\n", value);
-			fflush(stdout);
-		}*/
-	  //sleep(0.25);
-	}
-}
-
-bool ADCreader::read_enable(){
-	 if(inp==outp){
-		return false;
-	}else{
-		 return true;
-	}	
 }
 
 
-int ADCreader::get_samples()
-{
-      int ret=buff[outp];
-      //fprintf(stderr,"OUTPUT DATA = %d       \n",buff[outp]);	
-      outp=(outp+1)%100;	
-      return ret;
-}
 
 
 void ADCreader::quit()
